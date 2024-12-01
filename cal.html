@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS Style Calculator</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #121212;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        .calculator {
+            width: 320px;
+            background: #1c1c1c;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .display {
+            height: 100px;
+            background: #000;
+            color: #fff;
+            font-size: 2.5rem;
+            border-radius: 15px;
+            text-align: right;
+            line-height: 100px;
+            padding: 0 20px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            height: 60px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-number {
+            background: #333;
+            color: #fff;
+        }
+        .btn-operator {
+            background: #ff9500;
+            cursor: pointer;
+            outline: none;
+        }
+        button:active {
+            opacity: 0.8;
+        }
+        .number {
+            background: #333;
+            color: #fff;
+        }
+        .operator {
+            background: #ff9f0a;
+            color: #fff;
+        }
+        .special {
+            background: #a5a5a5;
+            color: #000;
+        }
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="special" onclick="clearDisplay()">AC</button>
+            <button class="special" onclick="inputOperation('+/-')">+/-</button>
+            <button class="special" onclick="inputOperation('%')">%</button>
+            <button class="operator" onclick="inputOperation('/')">÷</button>
+
+            <button class="number" onclick="inputNumber(7)">7</button>
+            <button class="number" onclick="inputNumber(8)">8</button>
+            <button class="number" onclick="inputNumber(9)">9</button>
+            <button class="operator" onclick="inputOperation('*')">×</button>
+
+            <button class="number" onclick="inputNumber(4)">4</button>
+            <button class="number" onclick="inputNumber(5)">5</button>
+            <button class="number" onclick="inputNumber(6)">6</button>
+            <button class="operator" onclick="inputOperation('-')">−</button>
+
+            <button class="number" onclick="inputNumber(1)">1</button>
+            <button class="number" onclick="inputNumber(2)">2</button>
+            <button class="number" onclick="inputNumber(3)">3</button>
+            <button class="operator" onclick="inputOperation('+')">+</button>
+
+            <button class="number zero" onclick="inputNumber(0)">0</button>
+            <button class="number" onclick="inputNumber('.')">.</button>
+            <button class="operator" onclick="calculateResult()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let previousInput = null;
+        let operation = null;
+
+        function updateDisplay() {
+            const display = document.getElementById('display');
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = null;
+            operation = null;
+            updateDisplay();
+        }
+
+        function inputNumber(num) {
+            if (currentInput === '0' && num !== '.') {
+                currentInput = '' + num;
+            } else {
+                currentInput += num;
+            }
+            updateDisplay();
+        }
+
+        function inputOperation(op) {
+            if (op === '+/-') {
+                currentInput = (parseFloat(currentInput) * -1).toString();
+            } else if (op === '%') {
+                currentInput = (parseFloat(currentInput) / 100).toString();
+            } else {
+                if (previousInput !== null) calculateResult();
+                previousInput = currentInput;
+                currentInput = '0';
+                operation = op;
+            }
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            if (!operation || previousInput === null) return;
+
+            let result;
+            const prev = parseFloat(previousInput);
+            const curr = parseFloat(currentInput);
+
+            switch (operation) {
+                case '+':
+                    result = prev + curr;
+                    break;
+                case '-':
+                    result = prev - curr;
+                    break;
+                case '*':
+                    result = prev * curr;
+                    break;
+                case '/':
+                    result = prev / curr;
+                    break;
+                default:
+                    return;
+            }
+
+            currentInput = result.toString();
+            previousInput = null;
+            operation = null;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
